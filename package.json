@@ -1,0 +1,20 @@
+{
+    "name": "resource-monitor",
+    "version": "1.0.0",
+    "description": "Node.js application for monitoring VM resources and scaling to GCP",
+    "main": "monitor.js",
+    "scripts": {
+      "start": "node monitor.js"
+    },
+    "dependencies": {
+      "axios": "^1.6.0",
+      "os-utils": "^0.0.14",
+      "google-auth-library": "^9.1.0"
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "author": "Your Name",
+    "license": "MIT"
+  }
+  
