@@ -5,9 +5,9 @@ const axios = require('axios');
 const CPU_THRESHOLD = 75;
 
 // GCP Instance details
-const GCP_PROJECT_ID = 'your-gcp-project-id';
-const GCP_ZONE = 'us-central1-a';
-const INSTANCE_TEMPLATE = 'your-instance-template';
+const GCP_PROJECT_ID = 'reference-node-451306-f5';
+const GCP_ZONE = 'us-central1';
+const INSTANCE_TEMPLATE = 'load-balancer-template';
 
 async function scaleToGCP() {
     try {
