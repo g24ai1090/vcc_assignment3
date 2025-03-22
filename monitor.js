@@ -1,45 +1,33 @@
-const os = require('os-utils');
+const os = require('os');
+const osu = require('os-utils');
 const axios = require('axios');
 
-// Threshold for CPU usage
-const CPU_THRESHOLD = 75;
+const THRESHOLD = 75; // CPU & RAM usage threshold
+const CHECK_INTERVAL = 10000; // Check every 10 sec
 
-// GCP Instance details
-const GCP_PROJECT_ID = 'reference-node-451306-f5';
-const GCP_ZONE = 'us-central1';
-const INSTANCE_TEMPLATE = 'load-balancer-template';
+async function checkSystemUsage() {
+    osu.cpuUsage(async (cpu) => {
+        const memoryUsage = (1 - os.freemem() / os.totalmem()) * 100;
 
-async function scaleToGCP() {
-    try {
-        await axios.post(`https://cloud.googleapis.com/compute/v1/projects/${GCP_PROJECT_ID}/zones/${GCP_ZONE}/instances`, {
-            name: `vm-instance-${Date.now()}`,
-            sourceInstanceTemplate: `projects/${GCP_PROJECT_ID}/global/instanceTemplates/${INSTANCE_TEMPLATE}`,
-        }, {
-            headers: {
-                'Authorization': `Bearer ${process.env.GCP_ACCESS_TOKEN}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        console.log(`CPU Usage: ${cpu * 100}%`);
+        console.log(`Memory Usage: ${memoryUsage}%`);
 
-        console.log('New GCP instance created successfully!');
-    } catch (error) {
-        console.error('Error scaling instance:', error.response ? error.response.data : error.message);
-    }
-}
-
-function monitorResources() {
-    os.cpuUsage((cpuPercent) => {
-        const memUsage = (1 - os.freememPercentage()) * 100;
-
-        console.log(`CPU Usage: ${cpuPercent * 100}%`);
-        console.log(`Memory Usage: ${memUsage}%`);
-
-        if (cpuPercent * 100 > CPU_THRESHOLD || memUsage > CPU_THRESHOLD) {
-            console.log('Resource usage exceeded 75%, scaling to GCP...');
-            scaleToGCP();
+        if (cpu * 100 > THRESHOLD || memoryUsage > THRESHOLD) {
+            console.log('High resource usage detected! Triggering GCP auto-scale...');
+            await triggerGCPInstance();
         }
     });
 }
 
-// Monitor every 10 seconds
-setInterval(monitorResources, 10000);
+async function triggerGCPInstance() {
+    try {
+        await axios.post('http://your-gcp-function-url', {
+            action: 'scale_up'
+        });
+        console.log('GCP instance creation request sent.');
+    } catch (error) {
+        console.error('Failed to trigger GCP:', error.message);
+    }
+}
+
+setInterval(checkSystemUsage, CHECK_INTERVAL);
