@@ -51,5 +51,9 @@ app.delete('/customers/:id', (req, res) => {
     res.json({ message: 'Customer deleted' });
 });
 
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 exports.customerAPI = app;
