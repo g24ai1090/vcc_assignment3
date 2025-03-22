@@ -1,8 +1,6 @@
 const express = require('express');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
 
 let customers = [
@@ -10,7 +8,7 @@ let customers = [
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' }
 ];
 
-let nextId = customers.length + 1; // Keeps track of the next available ID
+let nextId = customers.length + 1;
 
 app.get('/customers', (req, res) => {
     res.json(customers);
@@ -53,6 +51,5 @@ app.delete('/customers/:id', (req, res) => {
     res.json({ message: 'Customer deleted' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+
+exports.customerAPI = app;
