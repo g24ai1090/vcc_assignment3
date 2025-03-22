@@ -1,6 +1,8 @@
 const { Compute } = require('@google-cloud/compute');
-
-exports.scaleUp = async (req, res) => {
+const express = require('express');
+const app = express();
+app.use(express.json());
+app.post('/', async(req,res) => {
     const compute = new Compute();
     const zone = compute.zone('us-central1-a');
     const vmName = `scaled-instance-${Date.now()}`;
@@ -38,4 +40,10 @@ exports.scaleUp = async (req, res) => {
         console.error('Error creating VM:', error.message);
         res.status(500).send({ error: error.message });
     }
-};
+});
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log('scaleup service running on port ${PORT}');
+})
+
