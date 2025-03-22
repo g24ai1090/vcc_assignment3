@@ -21,7 +21,7 @@ async function checkSystemUsage() {
 
 async function triggerGCPInstance() {
     try {
-        await axios.post('http://your-gcp-function-url', {
+        await axios.post('https://us-central1-reference-node-451306-f5.cloudfunctions.net/scaleUp', {
             action: 'scale_up'
         });
         console.log('GCP instance creation request sent.');
