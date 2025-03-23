@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "google-cloud/compute": "^0.10.0",
+    "@google-cloud/compute": "^3.0.0",
     "axios":"^1.8.4",
     "os-utils":"^0.0.14"
   },
