@@ -1,18 +1,18 @@
-const { Compute } = require('@google-cloud/compute');
-const express = require('express');
-const app = express();
-app.use(express.json());
-app.post('/', async(req,res) => {
-    const compute = new Compute();
-    const zone = compute.zone('us-central1-a');
+const { InstancesClient } = require('@google-cloud/compute');
+
+exports.scaleUp = async (req, res) => {
+    const projectId = 'reference-node-451306-f5';
+    const zone = 'us-central1-a';
     const vmName = `scaled-instance-${Date.now()}`;
 
     try {
         console.log(`Creating VM: ${vmName}`);
-        const vm = zone.vm(vmName);
+        const instancesClient = new InstancesClient();
 
-        await vm.create({
-            machineType: 'e2-medium',
+        // Define the VM configuration
+        const instanceConfig = {
+            name: vmName,
+            machineType: `zones/${zone}/machineTypes/e2-medium`,
             disks: [{
                 boot: true,
                 autoDelete: true,
@@ -33,17 +33,22 @@ app.post('/', async(req,res) => {
                     nohup node server.js > output.log 2>&1 &`
                 }]
             }
+        };
+
+        // Create the VM instance
+        const [operation] = await instancesClient.insert({
+            project: projectId,
+            zone,
+            instanceResource: instanceConfig,
         });
 
-        res.status(200).send({ message: `VM ${vmName} created with customerAPI running.` });
+        // Wait for the operation to complete
+        await operation.promise();
+        console.log(`VM ${vmName} created successfully.`);
+
+        res.status(200).send({ message: `VM ${vmName} created successfully.` });
     } catch (error) {
         console.error('Error creating VM:', error.message);
         res.status(500).send({ error: error.message });
     }
-});
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log('scaleup service running on port ${PORT}');
-})
-
+};
