@@ -3,7 +3,7 @@ const osu = require('os-utils');
 const axios = require('axios');
 
 const THRESHOLD = 75; // CPU & RAM usage threshold
-const CHECK_INTERVAL = 10000; // Check every 10 sec
+const CHECK_INTERVAL = 2000; // Check every 10 sec
 
 async function checkSystemUsage() {
     osu.cpuUsage(async (cpu) => {
